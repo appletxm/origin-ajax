@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html lang="en" style="font-size: 100px;">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+	<meta name="format-detection" content="telephone=no">
+  <title>test origin ajax request</title>
+  <link rel="icon" href="assets/images/logo.ico" type="image/png">
+  <style>
+    body{
+      font-size: .12rem;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>test origin ajax</h1>
+  <img src="assets/images/rc-code.jpg" />
+
+  <button id="js-ajax-get">click me create a get ajax</button>
+  <button id="js-ajax-get-2">click me create a post ajax</button>
+
+
+  <script src="https://google.github.io/traceur-compiler/bin/traceur.js"></script>
+  <script src="https://google.github.io/traceur-compiler/bin/BrowserSystem.js"></script>
+  <!-- <script src="https://google.github.io/traceur-compiler/src/bootstrap.js"></script> -->
+  <script type="module">
+    import Ajax from './src/ajax.js'
+
+    let ajax = new Ajax()
+    document.querySelector('#js-ajax-get').addEventListener('click', () => {
+      let params = {
+        url: 'api/test',
+        params: {
+          userName: 'txm',
+          apge: '10',
+          title: 'cs'
+        },
+        headers: {
+          userToken: 'tokenstringishere',
+          contentType: 'application/json;charset=UTF-8;'
+        }
+      }
+      ajax.get(params).then(res => {
+        console.info('==============', res)
+      }).catch(err => {
+        console.info('@@@@@@@@@@', err)
+      })
+    }, false)
+
+    document.querySelector('#js-ajax-get-2').addEventListener('click', () => {
+      let params = {
+        url: 'api/test2',
+        params: {
+          userName: 'txm',
+          apge: '10',
+          title: 'cs',
+          mobile: '13456789011',
+          address: '广州市天河区珠江新城1000号',
+          detail: '广州市天河区珠江新城1000号广州市天河区珠江新城1000号广州市天河区珠江新城1000号广州市天河区珠江新城1000号广州市天河区珠江新城1000号'
+        },
+        headers: {
+          userToken: 'tokenstringishere',
+          contentType: 'application/json;charset=UTF-8;'
+        }
+      }
+      ajax.post(params).then(res => {
+        console.info('=========post=====', res)
+      }).catch(err => {
+        console.info('@@@post@@@@@@@', err)
+      })
+    }, false)
+  </script>
+</body>
+</html>
