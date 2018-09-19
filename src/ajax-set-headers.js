@@ -7,6 +7,10 @@ export function doSetForGet(options, xhrObj) {
     newKey = key === 'contentType' ? 'Content-Type' : key
     xhrObj.setRequestHeader(newKey, headers[key])
   }
+
+  if(options.method === 'POST'){
+    xhrObj.setRequestHeader('Content-Length', options.paramsStr.length)
+  }
 }
 
 export function doSetForPost(options, xhrObj) {

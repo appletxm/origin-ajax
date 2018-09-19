@@ -35,5 +35,7 @@ export function getParamsForPost(options) {
     params = '';
   }
 
+  params = encodeURIComponent(params);
+
   return params;
 }

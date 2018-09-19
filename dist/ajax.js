@@ -47,7 +47,7 @@ var Ajax = function () {
     }
   }, {
     key: 'addEventListener',
-    value: function addEventListener(xhrId, resolveCb, rejectCb) {
+    value: function addEventListener(xhrId, resolveCb, rejectCb, options) {
       var _this = this;
 
       var xhr = xhrList[xhrId]['xhr'];
@@ -63,17 +63,21 @@ var Ajax = function () {
           resolveCb(resObj);
         }
         // else if(xhr.readyState === 4 && xhr.status !== 200){
-        //   debugger
         //   this.destroyed(xhrId)
         //   rejectCb({code: '9999', msg: 'get data failed'})
         // }
       });
 
       xhr.addEventListener('timeout', function () {
-        debugger;
         _this.destroyed(xhrId);
         rejectCb({ code: '10000', msg: 'request timeout' });
       });
+
+      if (options.onProgress && typeof options.onProgress === 'function') {
+        xhr.addEventListener('progress', function (e) {
+          options.onProgress(e);
+        });
+      }
     }
   }, {
     key: 'destroyed',
@@ -133,7 +137,7 @@ var Ajax = function () {
         params = setParams.getParamsForGet(options);
       }
       options.url = options.url + params;
-      this.addEventListener(xhrId, resolveCb, rejectCb);
+      this.addEventListener(xhrId, resolveCb, rejectCb, options);
       this.doAjax(options, xhrObj);
 
       return promise;
@@ -158,7 +162,7 @@ var Ajax = function () {
         options.paramsStr = params;
       }
 
-      this.addEventListener(xhrId, resolveCb, rejectCb);
+      this.addEventListener(xhrId, resolveCb, rejectCb, options);
       this.doAjax(options, xhrObj);
 
       return promise;

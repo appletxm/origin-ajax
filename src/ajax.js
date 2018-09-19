@@ -41,7 +41,7 @@ const Ajax = class {
     return xhr
   }
 
-  addEventListener (xhrId, resolveCb, rejectCb) {
+  addEventListener (xhrId, resolveCb, rejectCb, options) {
     let xhr = xhrList[xhrId]['xhr']
     if (!xhr) {
       return false
@@ -56,17 +56,21 @@ const Ajax = class {
         
       } 
       // else if(xhr.readyState === 4 && xhr.status !== 200){
-      //   debugger
       //   this.destroyed(xhrId)
       //   rejectCb({code: '9999', msg: 'get data failed'})
       // }
     })
 
     xhr.addEventListener('timeout', () => {
-      debugger
       this.destroyed(xhrId)
       rejectCb({code: '10000', msg: 'request timeout'})
     })
+
+    if(options.onProgress && typeof options.onProgress === 'function'){
+      xhr.addEventListener('progress', (e) => {
+        options.onProgress(e)
+      })
+    }
   }
 
   destroyed(xhrId) {
@@ -116,7 +120,7 @@ const Ajax = class {
       params = setParams.getParamsForGet(options)
     }
     options.url = options.url + params
-    this.addEventListener(xhrId, resolveCb, rejectCb)
+    this.addEventListener(xhrId, resolveCb, rejectCb, options)
     this.doAjax(options, xhrObj)
 
     return promise
@@ -133,7 +137,7 @@ const Ajax = class {
       options.paramsStr = params
     }
 
-    this.addEventListener(xhrId, resolveCb, rejectCb)
+    this.addEventListener(xhrId, resolveCb, rejectCb, options)
     this.doAjax(options, xhrObj)
 
     return promise

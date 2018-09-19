@@ -20,7 +20,7 @@
   <img src="assets/images/rc-code.jpg" />
 
   <button id="js-ajax-get">click me create a get ajax</button>
-  <button id="js-ajax-get-2">click me create a post ajax</button>
+  <button id="js-ajax-get-2">click me create a post ajax <span id="js-progress-label">0%</span></button>
 
 
   <script src="https://google.github.io/traceur-compiler/bin/traceur.js"></script>
@@ -64,6 +64,10 @@
         headers: {
           userToken: 'tokenstringishere',
           contentType: 'application/json;charset=UTF-8;'
+        },
+        onProgress(progress){
+          console.info('****progress***', progress.total, progress.loaded)
+          document.querySelector('#js-progress-label').innerHTML =  (progress.loaded/progress.total).toFixed(2) * 100 + '%'
         }
       }
       ajax.post(params).then(res => {
