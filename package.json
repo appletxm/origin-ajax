@@ -15,6 +15,7 @@
     "babel-polyfill": "^6.26.0",
     "babel-standalone": "^6.26.0",
     "express": "4.16.3",
+    "formidable": "^1.2.1",
     "log4js": "^3.0.5"
   },
   "devDependencies": {

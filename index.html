@@ -2,7 +2,9 @@
 
 <html lang="en" style="font-size: 100px;">
 <head>
-	<meta charset="UTF-8">
+  <meta charset="UTF-8">
+  <!-- <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="expires" content="0"> -->
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 	<meta name="format-detection" content="telephone=no">
@@ -12,24 +14,56 @@
     body{
       font-size: .12rem;
     }
+
+    form{
+      display: block;
+      margin: 20px;
+    }
+
+    form input{
+      display: block;
+      margin: 0 0 5px 0;
+    }
   </style>
 </head>
 
 <body>
   <h1>test origin ajax</h1>
-  <img src="assets/images/rc-code.jpg" />
+  <img src="assets/images/rc-code.jpg" /><br/>
 
-  <button id="js-ajax-get">click me create a get ajax</button>
-  <button id="js-ajax-get-2">click me create a post ajax <span id="js-progress-label">0%</span></button>
+  <form method="POST" action="/api/test3" enctype="multipart/form-data">
+    <input type="text" value="" name="name">
+    <input type="email" value="" name="email">
+    <input type="file" value="" name="pic">
+    <input type="file" value="" name="pic2">
+    <input type="submit" value="提交">
+  </form>
+
+  <button id="js-ajax-get">click me create a get ajax</button> <br/>
+  <button id="js-ajax-post-2">click me create a post ajax application/json<span id="js-progress-label">0%</span></button><br/>
+  <button id="js-ajax-post-3">click me create a post ajax for application/x-www-form-urlencoded <span id="js-progress-label-2">0%</span></button>
+  
+  <button id="js-fetch-get-1">click me create a fetch get</button>
+
+  <form method="POST" action="/api/test" enctype="multipart/form-data">
+    <input type="text" name="userName" value="" />
+    <input type="password" name="userPassowrd" value="">
+    <input type="file" name="userPic" />
+    <button id="js-fetch-post-1">submit user info</button>
+  </form>
 
 
   <script src="https://google.github.io/traceur-compiler/bin/traceur.js"></script>
   <script src="https://google.github.io/traceur-compiler/bin/BrowserSystem.js"></script>
   <!-- <script src="https://google.github.io/traceur-compiler/src/bootstrap.js"></script> -->
+
   <script type="module">
     import Ajax from './src/ajax.js'
+    import Fetch from './src/fetch.js'
 
     let ajax = new Ajax()
+    let fetchObj = new Fetch()
+    
     document.querySelector('#js-ajax-get').addEventListener('click', () => {
       let params = {
         url: 'api/test',
@@ -50,7 +84,7 @@
       })
     }, false)
 
-    document.querySelector('#js-ajax-get-2').addEventListener('click', () => {
+    document.querySelector('#js-ajax-post-2').addEventListener('click', () => {
       let params = {
         url: 'api/test2',
         params: {
@@ -76,6 +110,78 @@
         console.info('@@@post@@@@@@@', err)
       })
     }, false)
+
+    document.querySelector('#js-ajax-post-3').addEventListener('click', () => {
+      let params = {
+        url: 'api/test2',
+        params: {
+          userName: 'txm',
+          apge: '10',
+          title: 'cs',
+          mobile: '13456789011',
+          address: '广州市天河区珠江新城1000号',
+          detail: '广州市天河区珠江新城1000号广州市天河区珠江新城1000号广州市天河区珠江新城1000号广州市天河区珠江新城1000号广州市天河区珠江新城1000号'
+        },
+        headers: {
+          userToken: 'tokenstringishere',
+          contentType: 'application/x-www-form-urlencoded;charset=UTF-8;'
+        },
+        onProgress(progress){
+          console.info('****progress***', progress.total, progress.loaded)
+          document.querySelector('#js-progress-label-2').innerHTML =  (progress.loaded/progress.total).toFixed(2) * 100 + '%'
+        }
+      }
+      ajax.post(params).then(res => {
+        console.info('=========post application/x-www-form-urlencoded=====', res)
+      }).catch(err => {
+        console.info('@@@post application/x-www-form-urlencoded@@@@@@@', err)
+      })
+    }, false)
+  
+    document.querySelector('#js-fetch-get-1').addEventListener('click', () => {
+      fetchObj.doFetch('/api/test', {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, cors, *same-origin
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, same-origin, *omit
+        headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        redirect: 'follow', // manual, *follow, error
+        referrer: 'no-referrer', // no-referrer, *client
+        body: JSON.stringify({a:1243, b:334, name: 'uuuu'}), // body data type must match 'Content-Type' header
+      }).then(function(response){
+        return response.json()
+      }).then(val => {
+        console.info('######', val) 
+      }).catch(function(error){
+          console.log(error);
+      })
+    })
+  
+    document.querySelector('#js-fetch-post-1').addEventListener('click', () => {
+      let formData = new FormData()
+      formData.append('userName', document.querySelector('input[name=userName]').value)
+      formData.append('userName', document.querySelector('input[name=userPassowrd]').value)
+      formData.append('userPic', (document.querySelector('input[name=userPic]')).files[0])
+
+      debugger
+
+      fetchObj.doFetch('/api/test', {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        body: formData
+      }).then(function(response){
+        return response.json()
+      }).then(val => {
+        console.info('##3333####', val) 
+      }).catch(function(error){
+          console.log(error);
+      })
+    })
   </script>
 </body>
 </html>
